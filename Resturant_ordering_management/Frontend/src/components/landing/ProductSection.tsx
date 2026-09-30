@@ -219,7 +219,7 @@ export function ProductSection({
               role="dialog"
               aria-modal="true"
               aria-label={selectedProduct.name}
-              className="relative bg-[#F5f5f5] rounded-3xl max-w-4xl w-full max-h-[70vh] overflow-y-auto border-t-4 border-[#F29C1F] shadow-2xl text-[#840608]"
+              className="relative bg-[#F5f5f5] rounded-3xl max-w-4xl w-full max-h-[60vh] overflow-y-auto border-t-4 border-[#F29C1F] shadow-2xl text-[#840608]"
               onClick={(e) => e.stopPropagation()}
             >
               <button
