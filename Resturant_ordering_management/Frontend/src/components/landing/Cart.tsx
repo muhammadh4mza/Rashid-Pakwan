@@ -811,32 +811,39 @@ export function Cart({
                               }`}
                               aria-label={`Add ${entry.name} to cart`}
                             >
-                              {/* Thumb */}
-                              <div className="relative h-16 w-full rounded-xl overflow-hidden bg-[#FFF1D0] border border-[#840608]/10 mb-2 grid place-items-center">
-                                {imgSrc ? (
-                                  <img
-                                    src={imgSrc}
-                                    alt=""
-                                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                  />
-                                ) : (
-                                  <Sparkles className="h-6 w-6 text-[#B93A0E]/60" />
-                                )}
+                              <div className="relative">
+                                {/* Thumb */}
+                                <div className="relative h-16 w-full rounded-xl overflow-hidden bg-[#FFF1D0] border border-[#840608]/10 mb-2 grid place-items-center">
+                                  {imgSrc ? (
+                                    <img
+                                      src={imgSrc}
+                                      alt=""
+                                      className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105"
+                                    />
+                                  ) : (
+                                    <Sparkles className="h-6 w-6 text-[#B93A0E]/60" />
+                                  )}
 
-                                {/* Kind badge */}
-                                <span
-                                  className={`absolute top-1 left-1 text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${
-                                    kind === "extra"
-                                      ? "bg-[#4E8A45] text-white"
-                                      : "bg-[#840608] text-[#F29C1F]"
-                                  }`}
-                                >
-                                  {kind === "extra" ? "Extra" : "Add-on"}
-                                </span>
+                                  {/* Kind badge */}
+                                  <span
+                                    className={`absolute top-1 left-1 text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${
+                                      kind === "extra"
+                                        ? "bg-[#4E8A45] text-white"
+                                        : "bg-[#840608] text-[#F29C1F]"
+                                    }`}
+                                  >
+                                    {kind === "extra" ? "Extra" : "Add-on"}
+                                  </span>
+                                </div>
 
-                                {/* Floating + button */}
+                                {/* Name */}
+                                <p className="pr-7 text-xs font-semibold text-[#840608] leading-snug line-clamp-2 min-h-[1rem]">
+                                  {entry.name}
+                                </p>
+
+                                {/* Add button sits at the image/title boundary on the right. */}
                                 <span
-                                  className={`absolute -bottom-1 -right-1 grid place-items-center h-7 w-7 rounded-full border-2 border-[#FFF8E7] shadow-md group-hover:scale-110 transition-transform ${
+                                  className={`absolute right-0 top-[68px] z-10 grid h-7 w-7 -translate-y-1/2 place-items-center rounded-full border-2 border-[#FFF8E7] shadow-md group-hover:scale-110 transition-transform ${
                                     kind === "extra"
                                       ? "bg-[#4E8A45] text-white"
                                       : "bg-[#840608] text-[#F29C1F]"
@@ -845,11 +852,6 @@ export function Cart({
                                   <Plus className="h-3.5 w-3.5" />
                                 </span>
                               </div>
-
-                              {/* Name */}
-                              <p className="text-xs font-semibold text-[#840608] leading-snug line-clamp-2 min-h-[2rem]">
-                                {entry.name}
-                              </p>
 
                               {/* Price */}
                               <p className="text-xs font-bold text-[#B93A0E] tabular-nums mt-1">
