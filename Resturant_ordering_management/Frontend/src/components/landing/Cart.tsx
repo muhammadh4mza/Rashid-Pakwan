@@ -18,6 +18,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { formatAmount } from "@/lib/formatters";
 import { useMenuStore } from "@/store/MenuStore";
+import { useCartStore } from "@/store/CartStore";
 import { resolveMediaUrl } from "@/lib/api";
 
 const focusRing =
@@ -52,8 +53,6 @@ type CartProps = {
   onUpdateQuantity: (id: string, quantity: number) => void;
   onRemoveItem: (id: string) => void;
   onCheckout?: () => void;
-  /** Fired when the customer taps an add-on / extra card */
-  onAddAddon?: (entry: any) => void;
 };
 
 type DisplayRow =
@@ -214,8 +213,9 @@ function shuffle<T>(arr: T[]): T[] {
  */
 function useAllAddonsAndExtras() {
   const products = useMenuStore((s) => s.products);
-  const allAddons = useMenuStore((s: any) => s.addons);
-  const allExtras = useMenuStore((s: any) => s.extras);
+  const categories = useMenuStore((s) => s.categories);
+  const allAddons = useMenuStore((s: any) => s.addons || []);
+  const allExtras = useMenuStore((s: any) => s.extras || []);
 
   return useMemo(() => {
     const addonsMap = new Map<string, any>();
@@ -231,6 +231,28 @@ function useAllAddonsAndExtras() {
     if (Array.isArray(allExtras)) {
       for (const e of allExtras) {
         if (e?.id) extrasMap.set(e.id, { ...e, __kind: "extra" });
+      }
+    }
+    // Products in the menu category named "Extras" are also eligible.
+    const extrasCategoryIds = new Set(
+      categories
+        .filter(
+          (category) =>
+            ["extra", "extras"].includes(category.name.trim().toLowerCase()) ||
+            ["extra", "extras"].includes(category.slug.trim().toLowerCase())
+        )
+        .map((category) => category.id)
+    );
+    for (const product of products) {
+      const matchesExtrasCategory =
+        extrasCategoryIds.has(product.categoryId || "") ||
+        ["extra", "extras"].includes((product.categorySlug || "").toLowerCase());
+      if (matchesExtrasCategory && product.id) {
+        extrasMap.set(product.id, {
+          ...product,
+          __kind: "extra",
+          __source: "product",
+        });
       }
     }
     // 3) Per-product add-ons + extras
@@ -260,7 +282,7 @@ function useAllAddonsAndExtras() {
       ...Array.from(addonsMap.values()),
       ...Array.from(extrasMap.values()),
     ];
-  }, [products, allAddons, allExtras]);
+  }, [products, categories, allAddons, allExtras]);
 }
 
 export function Cart({
@@ -270,10 +292,31 @@ export function Cart({
   onUpdateQuantity,
   onRemoveItem,
   onCheckout,
-  onAddAddon,
 }: CartProps) {
   const navigate = useNavigate();
+  const addItem = useCartStore((s) => s.addItem);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+
+  const handleRecommendedAdd = (entry: any) => {
+    if (!entry) return;
+
+    const price = Number(entry.price ?? entry.unitPrice ?? 0);
+    const kind = entry.__kind === "extra" ? "Extra" : "Addon";
+    const productId =
+      entry.__source === "product"
+        ? entry.id
+        : `addon:${entry.id}`;
+
+    addItem({
+      productId,
+      name: entry.name || `${kind} recommendation`,
+      desc: entry.description || `${kind} recommended for your order`,
+      price,
+      currency: currency || "Rs ",
+      src: resolveMediaUrl(entry.image || entry.src) || "",
+      quantity: 1,
+    });
+  };
 
   // ---- Carousel state ----
   const allItems = useAllAddonsAndExtras();
@@ -457,7 +500,7 @@ export function Cart({
                   </button>
                 </div>
               ) : (
-                <>
+                <div className="flex min-h-full flex-col">
                   {/* ---- ITEMS LIST ---- */}
                   <div className="space-y-3">
                     {displayRows.map((row, idx) => {
@@ -701,7 +744,7 @@ export function Cart({
                       initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.15 }}
-                      className="mt-5 pt-5 border-t border-dashed border-[#840608]/20"
+                      className="mt-auto pt-5 border-t border-dashed border-[#840608]/20"
                     >
                       {/* Header with reshuffle + arrows */}
                       <div className="flex items-center justify-between mb-3">
@@ -747,8 +790,7 @@ export function Cart({
                       {/* Horizontally scrolling rail */}
                       <div
                         ref={carouselRef}
-                        className="flex gap-2.5 overflow-x-auto pb-2 -mx-4 px-4 snap-x snap-mandatory"
-                        style={{ scrollbarWidth: "thin" }}
+                        className="flex gap-2.5 overflow-x-auto pb-2 -mx-4 px-4 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
                       >
                         {shuffledItems.map((entry) => {
                           const price = Number(entry.price || 0);
@@ -761,7 +803,7 @@ export function Cart({
                             <button
                               key={`${kind}-${entry.id}`}
                               type="button"
-                              onClick={() => onAddAddon?.(entry)}
+                              onClick={() => handleRecommendedAdd(entry)}
                               className={`snap-start shrink-0 w-[132px] rounded-2xl bg-[#FFF8E7]/90 border hover:border-[#F29C1F]/70 hover:shadow-[0_8px_20px_-6px_rgba(58,15,10,0.2)] transition-all p-2.5 text-left cursor-pointer group ${focusRing} ${
                                 kind === "extra"
                                   ? "border-[#4E8A45]/30"
@@ -820,7 +862,7 @@ export function Cart({
                       </div>
                     </motion.div>
                   ) : null}
-                </>
+                </div>
               )}
             </div>
 

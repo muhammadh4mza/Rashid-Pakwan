@@ -569,6 +569,7 @@ export async function fetchPublicMenu(branchId?: string | null): Promise<{
   categories: MenuCategory[];
   products: MenuProduct[];
   addons: MenuAddon[];
+  extras: MenuAddon[];
   drinks: MenuDrink[];
 }> {
   const query = branchId ? `?branchId=${encodeURIComponent(branchId)}` : "";
@@ -577,6 +578,7 @@ export async function fetchPublicMenu(branchId?: string | null): Promise<{
     categories: data.categories || [],
     products: data.products || [],
     addons: data.addons || [],
+    extras: data.extras || [],
     drinks: data.drinks || [],
   };
 }

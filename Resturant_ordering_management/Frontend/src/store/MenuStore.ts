@@ -20,6 +20,7 @@ type MenuStore = {
   categories: MenuCategory[];
   products: MenuProduct[];
   addons: MenuAddon[];
+  extras: MenuAddon[];
   drinks: MenuDrink[];
   loading: boolean;
   error: string | null;
@@ -43,6 +44,7 @@ export const useMenuStore = create<MenuStore>((set, get) => ({
   categories: [],
   products: [],
   addons: [],
+  extras: [],
   drinks: [],
   loading: false,
   error: null,
@@ -67,6 +69,7 @@ export const useMenuStore = create<MenuStore>((set, get) => ({
         categories: menu.categories,
         products: menu.products,
         addons: menu.addons,
+        extras: menu.extras || [],
         drinks: menu.drinks,
         loading: false,
         loaded: true,
@@ -116,4 +119,3 @@ export const useMenuStore = create<MenuStore>((set, get) => ({
     }),
   setOnlySale: (value) => set({ onlySale: value }),
 }));
-

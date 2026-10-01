@@ -82,7 +82,7 @@ export function Categories({ sticky = false }: { sticky?: boolean }) {
 
   return (
     <div
-      className={`w-full bg-[#840608] border-b-2 border-[#F29C1F]/60 ${
+      className={`w-full bg-[#840608] border-b-2 border-t-2 border-[#F29C1F]/60 ${
         sticky ? "sticky top-[74px] sm:top-[80px] md:top-[115px] lg:top-[115px] z-40" : ""
       }`}
     >
