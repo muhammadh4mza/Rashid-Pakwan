@@ -58,8 +58,8 @@ export default function LoginPage() {
               <UtensilsCrossed className="h-6 w-6" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold">Rashid Pakwan Admin</h1>
-              <p className="text-primary-foreground/80">Restaurant Management Portal</p>
+              <h1 className="text-3xl font-bold">Digious Corp</h1>
+              <p className="text-primary-foreground/80">Order Management Portal</p>
             </div>
           </div>
           <h2 className="text-4xl font-bold leading-tight mb-4">
@@ -82,7 +82,7 @@ export default function LoginPage() {
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
                 <UtensilsCrossed className="h-5 w-5" />
               </div>
-              <span className="text-xl font-bold">Rashid Pakwan Admin</span>
+              <span className="text-xl font-bold">Digious Corp</span>
             </div>
             <CardTitle className="text-2xl">Sign in</CardTitle>
             <CardDescription>Enter your credentials to access the admin panel</CardDescription>
